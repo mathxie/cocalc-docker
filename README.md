@@ -1,6 +1,6 @@
-# DEPRECATED
+# Maintained by JP#BGY
 
-**This is deprecated. Old instructions below.** 
+**This is maintained by myself** 
 
 
 ---
