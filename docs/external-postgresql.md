@@ -178,7 +178,7 @@ To begin, we create a long-running Ubuntu Docker container which will serve Post
 5432, and then install PostgreSQL 14 via [apt](https://ubuntu.com/server/docs/package-management):
 
 ```sh
-~ $ docker run -d --name=postgres --network=cocalc-network ubuntu:22.04 sleep infinity
+~ $ docker run -d --name=postgres --network=cocalc-network ubuntu:24.04 sleep infinity
 ~ $ docker exec postgres bash -c 'apt update && DEBIAN_FRONTEND=noninteractive apt install -y postgresql-14'
 ```
 

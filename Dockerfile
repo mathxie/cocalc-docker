@@ -4,13 +4,13 @@
 # the R statistical software, SageMath (copying from another Docker build), and
 # the Julia programming language. Finally, it installs
 # various Jupyter kernels, including ones for Python, Octave, and JavaScript. The
-# image is built on top of the Ubuntu 22.04 operating system.
+# image is built on top of the Ubuntu 24.04 operating system.
 
 ARG SAGEMATH_TAG=
 ARG ARCH=
 FROM sagemathinc/sagemath-core${ARCH}:${SAGEMATH_TAG} as sagemath
 
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 MAINTAINER William Stein <wstein@sagemath.com>
 
@@ -56,8 +56,7 @@ RUN \
        wget \
        curl \
        git \
-       python3 \
-       python2 \
+       python3-full \
        python3-pip \
        python3-pandas \
        make \
@@ -67,9 +66,17 @@ RUN \
        psmisc \
        rsync \
        tidy \
+       parallel \
+       primesieve \
+       macaulay2 \
        libxml2-dev \
        libxslt-dev \
        libfuse-dev
+
+ENV VIRTUAL_ENV=/opt/venv
+ARG VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
  RUN \
      apt-get update \
@@ -143,6 +150,13 @@ RUN \
    apt-get update \
   && DEBIAN_FRONTEND=noninteractive apt-get install -y tachyon
 
+# install the latest pari-gp
+RUN \
+   wget https://pari.math.u-bordeaux.fr/pub/pari/unix/pari.tgz \
+   && tar xf pari.tgz \
+   && cd pari-* \
+   && MAKE="make -j$(cat /proc/cpuinfo | grep processor | wc -l)" ./Configure --prefix=/usr/local && make install
+
 # I'm now pre-building sage for each version once and for all via
 #    https://github.com/sagemathinc/cocalc-compute-docker
 # NOTE: this copies from a multi-platform image, so it properly works
@@ -188,7 +202,7 @@ RUN \
 # Pari/GP kernel support
 # This does build fine, but I'm not sure what it produces or where or how
 # to make it available.
-# RUN sage --pip install pari_jupyter
+RUN sage --pip install pari-jupyter
 
 # Install all aspell dictionaries, so that spell check will work in all languages.  This is
 # used by cocalc's spell checkers (for editors).  This takes about 80MB, which is well worth it.
@@ -214,11 +228,16 @@ RUN echo '2+3' | julia
 # I figured out the directory /opt/julia/local/share/julia by inspecting the global varaible
 # DEPOT_PATH from within a running Julia session as a normal user, and also reading julia docs:
 #    https://pkgdocs.julialang.org/v1/glossary/
-RUN echo 'using Pkg; Pkg.add("IJulia");' | JUPYTER=/usr/local/bin/jupyter JULIA_DEPOT_PATH=/opt/julia/local/share/julia JULIA_PKG=/opt/julia/local/share/julia julia
-RUN mv "$HOME/.local/share/jupyter/kernels/julia"* "/usr/local/share/jupyter/kernels/"
+RUN echo 'using Pkg; Pkg.add("IJulia");' | JUPYTER=$VIRTUAL_ENV/bin/jupyter JULIA_DEPOT_PATH=/opt/julia/local/share/julia JULIA_PKG=/opt/julia/local/share/julia julia
+RUN mv "$HOME/.local/share/jupyter/kernels/julia"* "$VIRTUAL_ENV/share/jupyter/kernels/"
 
 # Also add Pluto and other VERY popular Julia packages system-wide.
 RUN echo 'using Pkg; Pkg.add("Pluto"); Pkg.add("Plots"); Pkg.add("Flux"); Pkg.add("Makie");' | JULIA_DEPOT_PATH=/opt/julia/local/share/julia JULIA_PKG=/opt/julia/local/share/julia julia
+# Nemo, Hecke, and Oscar (some math software).
+RUN echo 'using Pkg; Pkg.add("Nemo"); Pkg.add("Hecke"); Pkg.add("Oscar")' | JULIA_DEPOT_PATH=/opt/julia/local/share/julia JULIA_PKG=/opt/julia/local/share/julia julia
+# Distributions, Random, HomotopyContinuation
+RUN echo 'using Pkg; Pkg.add("Distributions"); Pkg.add("Random"); Pkg.add("HomotopyContinuation")' | JULIA_DEPOT_PATH=/opt/julia/local/share/julia JULIA_PKG=/opt/julia/local/share/julia julia
+
 
 # Install R Jupyter Kernel package into R itself (so R kernel works), and some other packages e.g., rmarkdown which requires reticulate to use Python.
 RUN echo "install.packages(c('repr', 'IRdisplay', 'evaluate', 'crayon', 'pbdZMQ', 'httr', 'devtools', 'uuid', 'digest', 'IRkernel', 'formatR'), repos='https://cloud.r-project.org')" | sage -R --no-save
@@ -257,9 +276,9 @@ RUN echo -e "Package: *\nPin: release o=LP-PPA-mozillateam\nPin-Priority: 1001\n
 # so that's not an option.  Also, the chromium-browser package by default
 # in Ubuntu is just a tiny wrapper that says "use our snap".
 RUN \
-    add-apt-repository -y ppa:saiarcot895/chromium-beta \
+    add-apt-repository -y ppa:xtradeb/apps \
  && apt-get update \
- && DEBIAN_FRONTEND=noninteractive apt install -y chromium-browser
+ && DEBIAN_FRONTEND=noninteractive apt install -y chromium
 
 # VSCode code-server web application
 # See https://github.com/cdr/code-server/releases for VERSION.
@@ -274,10 +293,10 @@ RUN \
 RUN echo "umask 077" >> /etc/bash.bashrc
 
 # Install some Jupyter kernel definitions
-COPY kernels /usr/local/share/jupyter/kernels
+COPY kernels ${VIRTUAL_ENV}/share/jupyter/kernels
 
-RUN  chmod -R a+r /usr/local/share/jupyter/kernels \
-  && chmod a+x /usr/local/share/jupyter/kernels/*
+RUN  chmod -R a+r $VIRTUAL_ENV/share/jupyter/kernels \
+  && chmod a+x $VIRTUAL_ENV/share/jupyter/kernels/*
 
 # Bash jupyter kernel
 RUN umask 022 && pip install bash_kernel && python3 -m bash_kernel.install

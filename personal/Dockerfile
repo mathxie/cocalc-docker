@@ -31,7 +31,7 @@
 #
 ##########################################################################################
 
-ARG MYAPP_IMAGE=ubuntu:22.04
+ARG MYAPP_IMAGE=ubuntu:24.04
 FROM $MYAPP_IMAGE
 
 MAINTAINER William Stein <wstein@sagemath.com>

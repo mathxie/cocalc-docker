@@ -647,7 +647,7 @@ cp  Dockerfile Dockerfile-gpu
 Simply change first line in the Dockerfile-gpu
 
 ```
-#ARG MYAPP_IMAGE=ubuntu:22.04
+#ARG MYAPP_IMAGE=ubuntu:24.04
 ARG MYAPP_IMAGE=nvcr.io/nvidia/tensorflow:23.08-tf2-py3
 ```
 
@@ -655,7 +655,7 @@ to instead start with [the official Tensorflow image](https://catalog.ngc.nvidia
 For [the official PyTorch image](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pytorch), use:
 
 ```
-#ARG MYAPP_IMAGE=ubuntu:22.04
+#ARG MYAPP_IMAGE=ubuntu:24.04
 ARG MYAPP_IMAGE=nvcr.io/nvidia/pytorch:23.10-py3
 ```
 

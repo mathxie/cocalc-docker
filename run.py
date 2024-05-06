@@ -139,7 +139,7 @@ def root_ssh_keys():
 
 def start_hub():
     log("start_hub")
-    kill("cocalc-hub-server --mode=multi-user")
+    kill("cocalc-hub-server")
     # NOTE: there's automatic logging to files that rotate as they get bigger...
     if NOSSL:
         target = "hub-docker-prod-nossl"
@@ -167,7 +167,7 @@ def start_postgres():
     if not os.path.exists(
             PGDATA):  # see comments in smc/src/dev/project/start_postgres.py
         log("start_postgres:", "create data directory ", PGDATA)
-        run("sudo -u postgres /usr/lib/postgresql/14/bin/pg_ctl init -D '%s'" %
+        run("sudo -u postgres /usr/lib/postgresql/16/bin/pg_ctl init -D '%s'" %
             PGDATA)
         open(os.path.join(PGDATA, 'pg_hba.conf'),
              'w').write("local all all trust")
@@ -177,17 +177,17 @@ def start_postgres():
         open(conf, 'w').write(s)
         os.makedirs(PGHOST)
         postgres_perms()
-        run("sudo -u postgres /usr/lib/postgresql/14/bin/postgres -D '%s' >%s/postgres.log 2>&1 &"
+        run("sudo -u postgres /usr/lib/postgresql/16/bin/postgres -D '%s' >%s/postgres.log 2>&1 &"
             % (PGDATA, PGDATA))
         time.sleep(5)
-        run("sudo -u postgres /usr/lib/postgresql/14/bin/createuser -h '%s' -sE smc"
+        run("sudo -u postgres /usr/lib/postgresql/16/bin/createuser -h '%s' -sE smc"
             % PGHOST)
         run("sudo -u postgres kill %s" %
             (open(os.path.join(PGDATA, 'postmaster.pid')).read().split()[0]))
         time.sleep(3)
     log("start_postgres:", "starting the server")
     os.system(
-        "sudo -u postgres /usr/lib/postgresql/14/bin/postgres -D '%s' > /var/log/postgres.log 2>&1 &"
+        "sudo -u postgres /usr/lib/postgresql/16/bin/postgres -D '%s' > /var/log/postgres.log 2>&1 &"
         % PGDATA)
 
 
