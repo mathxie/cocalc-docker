@@ -21,6 +21,7 @@ ENV LC_ALL C.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV TERM screen
+ENV NODE_OPTIONS --dns-result-order=ipv4first
 
 
 # So we can source (see http://goo.gl/oBPi5G)
@@ -28,7 +29,7 @@ RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 # Ubuntu software that are used by CoCalc (latex, pandoc, sage)
 RUN \
-     apt-get update \
+     apt-get update && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y\
   && DEBIAN_FRONTEND=noninteractive apt-get install -y \
        software-properties-common \
        texlive \
