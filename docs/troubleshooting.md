@@ -130,3 +130,6 @@ Look at /tmp/log to see any logging output.
 
 You can also [use an external PostgreSQL server](./external-postgresql.md).
 
+## If you can't connect to all projects files
+
+After updating to Ubuntu 24.04, `createServer()` in nodejs without host uses ipv6 instead of ipv4. Howerver, the dns client converts "localhost" to "127.0.0.1" so it causes the problem. So if you encounter the problem, adding an option `--sysctl net.ipv6.conf.all.disable_ipv6=1` to `docker run` in order not to use ipv6 may solve the problem.
