@@ -1,6 +1,6 @@
 # Maintained by JP3BGY
 
-**This is maintained by myself** 
+**This is maintained by and for myself** 
 
 
 ---
