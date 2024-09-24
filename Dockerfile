@@ -17,10 +17,10 @@ MAINTAINER William Stein <wstein@sagemath.com>
 USER root
 
 # See https://github.com/sagemathinc/cocalc/issues/921
-ENV LC_ALL C.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV TERM screen
+ENV LC_ALL=C.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV TERM=screen
 
 
 # So we can source (see http://goo.gl/oBPi5G)
@@ -68,7 +68,7 @@ RUN \
        libxml2-dev \
        libxslt-dev \
        libfuse-dev \
-       libmpfr6 libmpfr-dev \
+       libmpfr6 libmpfr-dev 
 
 ENV VIRTUAL_ENV=/opt/venv
 ARG VIRTUAL_ENV=/opt/venv
@@ -122,7 +122,7 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
        bsdmainutils \
        postgresql \
        lz4 \
-       libflint17 libflint-dev
+       libflint18t64 libflint-dev
 
 
 # Install the R statistical software.  We do NOT use a custom repo, etc., as
