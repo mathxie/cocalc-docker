@@ -9,7 +9,7 @@ ARCH=$(shell uname -m | sed 's/x86_64/-x86_64/;s/arm64/-arm64/;s/aarch64/-arm64/
 # Update this for each new cocalc-docker release; it's a totally arbitrary version number.
 TAG=1.5
 
-SAGEMATH_TAG=10.2
+SAGEMATH_TAG=10.4
 cocalc-docker:
 	docker build \
 		--build-arg SAGEMATH_TAG=$(SAGEMATH_TAG) \

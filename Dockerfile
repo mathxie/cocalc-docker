@@ -38,11 +38,7 @@ RUN \
        texlive-luatex \
        texlive-bibtex-extra \
        texlive-science \
-       liblog-log4perl-perl
-
-RUN \
-    apt-get update \
- && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+       liblog-log4perl-perl \
        tmux \
        flex \
        bison \
@@ -71,7 +67,8 @@ RUN \
        macaulay2 \
        libxml2-dev \
        libxslt-dev \
-       libfuse-dev
+       libfuse-dev \
+       libmpfr6 libmpfr-dev \
 
 ENV VIRTUAL_ENV=/opt/venv
 ARG VIRTUAL_ENV=/opt/venv
@@ -97,11 +94,7 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
        libpq-dev \
        build-essential \
        automake \
-       jq
-
-RUN \
-   apt-get update \
-&& DEBIAN_FRONTEND=noninteractive apt-get install -y \
+       jq \
        cmake \
        gfortran \
        dpkg-dev \
@@ -128,7 +121,8 @@ RUN \
        zip \
        bsdmainutils \
        postgresql \
-       lz4
+       lz4 \
+       libflint17 libflint-dev
 
 
 # Install the R statistical software.  We do NOT use a custom repo, etc., as
