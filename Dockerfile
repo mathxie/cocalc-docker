@@ -165,7 +165,9 @@ RUN  ln -sf "/usr/local/sage/sage" /usr/bin/sage \
   && ln -sf "/usr/local/sage/sage" /usr/bin/sagemath
 
 # Put scripts to start gap, gp, maxima, ... in /usr/bin
-RUN sage --nodotsage -c "install_scripts('/usr/bin')"
+COPY src/scripts/links-to-sage.sh /root
+COPY src/scripts/install_scripts.py /root
+RUN chmod +x  /root/links-to-sage.sh && cd /root && ./links-to-sage.sh && rm links-to-sage.sh install_scripts.py
 
 # Install additional Python packages into the sage Python distribution...
 # Install terminado for terminal support in the Jupyter Notebook
@@ -181,7 +183,7 @@ RUN \
 # Try to install from pypi again to get better control over versions.
 # - ipywidgets<8 is because of https://github.com/sagemathinc/cocalc/issues/6128
 # - jupyter-client<7 is because of https://github.com/sagemathinc/cocalc/issues/5715
-RUN pip3 install pyyaml matplotlib jupyter jupyterlab "ipywidgets<8" "jupyter-client<7"
+RUN pip3 install pyyaml matplotlib jupyter jupyterlab ipywidgets "jupyter-client<7" snakeviz
 
 # The python3 kernel that gets installed is broken, and we don't need it
 RUN rm -rf /usr/local/share/jupyter/kernels/python3
@@ -360,6 +362,12 @@ RUN umask 022 && pip3 install --upgrade /cocalc/src/smc_pyutil/
 
 # Install code into Sage
 RUN umask 022 && sage -pip install --upgrade /cocalc/src/smc_sagews/
+
+RUN umask 022 && sage -pip install --upgrade pwntools pyvis networkx dash visdcc
+
+# Install some library 
+RUN sage -pip install testbook && \
+    pip3 install testbook
 
 # Build cocalc itself.
 RUN umask 022 \
