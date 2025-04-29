@@ -325,7 +325,7 @@ RUN ln -sf /usr/bin/yapf3 /usr/bin/yapf
 # Other pip3 packages
 # NOTE: Upgrading zmq is very important, or the Ubuntu version breaks everything..
 RUN \
-  pip3 install --upgrade --no-cache-dir  pandas plotly scipy  scikit-learn seaborn bokeh zmq k3d nose
+  pip3 install --upgrade --no-cache-dir  pandas plotly scipy  scikit-learn seaborn bokeh zmq k3d nose pycryptodome
 
 # Install node v18.17.1
 # CRITICAL:  Do *NOT* upgrade nodejs to a newer version until the following is fixed !!!!!!
@@ -363,7 +363,7 @@ RUN umask 022 && pip3 install --upgrade /cocalc/src/smc_pyutil/
 # Install code into Sage
 RUN umask 022 && sage -pip install --upgrade /cocalc/src/smc_sagews/
 
-RUN umask 022 && sage -pip install --upgrade pwntools pyvis networkx dash visdcc
+RUN umask 022 && sage -pip install --upgrade pycryptodome pwntools pyvis networkx dash visdcc
 
 # Install some library 
 RUN sage -pip install testbook && \
