@@ -2,6 +2,7 @@
 
 **This is maintained by and for myself** 
 
+This project is archived because cocalc is not OSS or freeware anymore.
 
 ---
 
