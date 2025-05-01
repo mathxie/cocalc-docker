@@ -279,7 +279,7 @@ RUN \
 # VSCode code-server web application
 # See https://github.com/cdr/code-server/releases for VERSION.
 RUN \
-     export VERSION=4.19.0 \
+     export VERSION=4.99.3 \
   && export ARCH=`uname -m | sed s/aarch64/arm64/ | sed s/x86_64/amd64/` \
   && curl -fOL https://github.com/cdr/code-server/releases/download/v$VERSION/code-server_"$VERSION"_"$ARCH".deb \
   && dpkg -i code-server_"$VERSION"_"$ARCH".deb \
@@ -327,12 +327,12 @@ RUN ln -sf /usr/bin/yapf3 /usr/bin/yapf
 RUN \
   pip3 install --upgrade --no-cache-dir  pandas plotly scipy  scikit-learn seaborn bokeh zmq k3d nose pycryptodome
 
-# Install node v18.17.1
+# Install node v22.15.0
 # CRITICAL:  Do *NOT* upgrade nodejs to a newer version until the following is fixed !!!!!!
 #    https://github.com/sagemathinc/cocalc/issues/6963
-ARG NODE_VERSION=18.17.1
+ARG NODE_VERSION=22.15.0
 # See https://github.com/nvm-sh/nvm#install--update-script for nvm versions
-ARG NVM_VERSION=0.39.5
+ARG NVM_VERSION=0.40.3
 RUN  mkdir -p /usr/local/nvm \
   && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v$NVM_VERSION/install.sh | NVM_DIR=/usr/local/nvm bash \
   && source /usr/local/nvm/nvm.sh \
@@ -344,8 +344,8 @@ RUN  mkdir -p /usr/local/nvm \
 # Kernel for javascript (the node.js Jupyter kernel)
 RUN \
   source /usr/local/nvm/nvm.sh \
-  && npm install --unsafe-perm -g ijavascript \
-  && ijsinstall --install=global
+  && npm install --unsafe-perm -g tslab \
+  && tslab install --sys-prefix
 
 # Commit to checkout and build.
 ARG BRANCH=master
