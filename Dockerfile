@@ -330,7 +330,7 @@ RUN \
 # Install node v22.15.0
 # CRITICAL:  Do *NOT* upgrade nodejs to a newer version until the following is fixed !!!!!!
 #    https://github.com/sagemathinc/cocalc/issues/6963
-ARG NODE_VERSION=22.15.0
+ARG NODE_VERSION=20.19.2
 # See https://github.com/nvm-sh/nvm#install--update-script for nvm versions
 ARG NVM_VERSION=0.40.3
 RUN  mkdir -p /usr/local/nvm \
@@ -364,6 +364,7 @@ RUN umask 022 && pip3 install --upgrade /cocalc/src/smc_pyutil/
 RUN umask 022 && sage -pip install --upgrade /cocalc/src/smc_sagews/
 
 RUN umask 022 && sage -pip install --upgrade pycryptodome pwntools pyvis networkx dash visdcc
+RUN umask 022 && sage -pip install git+https://github.com/PhilippNuspl/rec_sequences.git  
 
 # Install some library 
 RUN sage -pip install testbook && \
